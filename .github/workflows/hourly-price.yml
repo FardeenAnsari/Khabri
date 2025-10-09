@@ -2,26 +2,26 @@ name: Hourly Price Update
 
 on:
   schedule:
-    - cron: '0 * * * *'   # default: run at minute 0 of every hour (UTC)
-  workflow_dispatch:     # allows manual runs from Actions UI
+    - cron: "30 * * * *"  # every hour at :00 IST
+  workflow_dispatch:       # allows manual trigger
 
 jobs:
-  send_price:
+  run:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: "3.10"
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: |
+          pip install -r requirements.txt
 
-      - name: Run price bot
+      - name: Run bot
         env:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           CHAT_ID: ${{ secrets.CHAT_ID }}
