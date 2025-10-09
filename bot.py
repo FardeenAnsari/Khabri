@@ -6,6 +6,7 @@ import re
 from bs4 import BeautifulSoup
 from telegram import Bot
 
+# Environment variables
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
 PRODUCTS = os.getenv("PRODUCTS", "")  # comma-separated URLs
@@ -23,7 +24,7 @@ HEADERS = {
 }
 
 def extract_number(text):
-    # return first numeric-like group (e.g. "12,499.00") cleaned to "12499.00"
+    """Extract numeric value from text, e.g., ₹3,446 → 3446"""
     if not text:
         return None
     m = re.search(r"[\d,]+(\.\d+)?", text.replace("₹", ""))
@@ -36,15 +37,14 @@ def fetch_price(url):
             resp.raise_for_status()
             soup = BeautifulSoup(resp.text, "html.parser")
 
-            # Flipkart price updated selector
+            # Flipkart price selector (current price)
             fp = soup.select_one("div.Nx9bqj.CxhGGd")
             if fp:
                 val = extract_number(fp.get_text())
                 if val:
                     return val
 
-
-            # Amazon and other selectors
+            # Other selectors for Amazon or fallback
             selectors = [
                 "#priceblock_ourprice",
                 "#priceblock_dealprice",
