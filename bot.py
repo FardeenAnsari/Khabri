@@ -3,7 +3,7 @@ import os
 import time
 import requests
 import re
-from bs4 import BeautifulSoup, soup
+from bs4 import BeautifulSoup
 from telegram import Bot
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
