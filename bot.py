@@ -76,7 +76,7 @@ def main():
     msg = build_message(urls)
     print("Message to send:\n", msg)
     try:
-        bot.send_message(chat_id=CHAT_ID, text=msg)
+        bot.send_message(chat_id=CHAT_ID, text=msg, parse_mode="Markdown")
         print("Telegram message sent.")
     except Exception as e:
         print("Error sending Telegram message:", e)
