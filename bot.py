@@ -37,7 +37,7 @@ def fetch_price(url):
             soup = BeautifulSoup(resp.text, "html.parser")
 
             # Flipkart price common selector
-            fp = soup.select_one("div._30jeq3._16Jk6d")
+            fp = soup.select_one("#container > div > div._39kFie.N3De93.JxFEK3._48O0EI > div.DOjaWF.YJG4Cf > div.DOjaWF.gdgoEp.col-8-12 > div:nth-child(3) > div > div.x\\+7QT1.dB67CR > div.UOCQB1 > div > div.Nx9bqj.CxhGGd")
             if fp:
                 val = extract_number(fp.get_text())
                 if val:
