@@ -23,28 +23,24 @@ HEADERS = {
                   "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"
 }
 
-def extract_number(text):
-    """Extract numeric value from text, e.g., ₹3,446 → 3446"""
-    if not text:
-        return None
-    m = re.search(r"[\d,]+(\.\d+)?", text.replace("₹", ""))
-    return m.group(0).replace(",", "") if m else None
-
 def fetch_price(url):
+    """Fetch the current price of a product from Flipkart or Amazon."""
     for attempt in range(1, 4):
         try:
             resp = requests.get(url, headers=HEADERS, timeout=15)
             resp.raise_for_status()
             soup = BeautifulSoup(resp.text, "html.parser")
 
-            # Flipkart price selector (current price)
+            # --- Flipkart: current discounted price ---
             fp = soup.select_one("div.Nx9bqj.CxhGGd")
             if fp:
-                val = extract_number(fp.get_text())
+                raw_price = fp.get_text(strip=True)
+                print(f"[DEBUG] Raw price for {url}: {raw_price}")
+                val = re.sub(r"[^\d]", "", raw_price)  # keep digits only
                 if val:
                     return val
 
-            # Other selectors for Amazon or fallback
+            # --- Other selectors (Amazon or fallback) ---
             selectors = [
                 "#priceblock_ourprice",
                 "#priceblock_dealprice",
@@ -55,15 +51,17 @@ def fetch_price(url):
             for sel in selectors:
                 el = soup.select_one(sel)
                 if el:
-                    txt = el.get("content") if el.name == "meta" else el.get_text()
-                    val = extract_number(txt)
+                    txt = el.get("content") if el.name == "meta" else el.get_text(strip=True)
+                    val = re.sub(r"[^\d]", "", txt)
                     if val:
                         return val
 
             return "Price not found"
+
         except Exception as e:
             print(f"[try {attempt}] Error fetching {url}: {e}")
             time.sleep(2)
+
     return "Error fetching after retries"
 
 def build_message(urls):
