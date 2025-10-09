@@ -3,7 +3,7 @@ import os
 import time
 import requests
 import re
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, soup
 from telegram import Bot
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
@@ -36,12 +36,13 @@ def fetch_price(url):
             resp.raise_for_status()
             soup = BeautifulSoup(resp.text, "html.parser")
 
-            # Flipkart price common selector
-            fp = soup.select_one("#container > div > div._39kFie.N3De93.JxFEK3._48O0EI > div.DOjaWF.YJG4Cf > div.DOjaWF.gdgoEp.col-8-12 > div:nth-child(3) > div > div.x\\+7QT1.dB67CR > div.UOCQB1 > div > div.Nx9bqj.CxhGGd")
+            # Flipkart price updated selector
+            fp = soup.select_one("div.Nx9bqj.CxhGGd")
             if fp:
                 val = extract_number(fp.get_text())
                 if val:
                     return val
+
 
             # Amazon and other selectors
             selectors = [
